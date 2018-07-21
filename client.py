@@ -7,6 +7,7 @@ import json
 
 local = Local()
 protocol = local('protocol')
+offline = False
 
 
 class Client(Thread):
@@ -21,7 +22,8 @@ class Client(Thread):
 
         self.handlers = {}
 
-        self.start()
+        if not offline:
+            self.start()
 
     def make_socket(self):
         try:
@@ -31,7 +33,8 @@ class Client(Thread):
 
     def reconnect(self):
         print('Reconnecting in 5 second')
-        self.sock.close()
+        if self.sock:
+            self.sock.close()
         time.sleep(5)
         self.make_socket()
 
