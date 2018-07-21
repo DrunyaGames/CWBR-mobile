@@ -41,7 +41,7 @@ class Client(Thread):
             self.make_socket()
 
         try:
-            self.sock.sendall({'type': message_type, 'data': data})
+            self.sock.sendall(json.dumps({'type': message_type, 'data': data}))
         except ConnectionAbortedError:
             self.reconnect()
 
