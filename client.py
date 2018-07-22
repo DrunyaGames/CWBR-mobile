@@ -18,6 +18,7 @@ class Client(Thread):
         self.make_socket()
 
         self.handlers = {}
+        self.error_handlers = {}
 
         if not offline:
             self.start()
@@ -59,10 +60,22 @@ class Client(Thread):
 
     def handle(self, event):
         def decorator(func):
-            def warpper(data):
+            def wrapper(data):
                 return func(**data)
-            self.handlers[event] = warpper
-            return warpper
+
+            self.handlers[event] = wrapper
+            return wrapper
+
+        return decorator
+
+    def error_handle(self, code):
+        def decorator(func):
+            def wrapper(data):
+                return func(**data)
+
+            self.error_handlers[code] = wrapper
+            return wrapper
+
         return decorator
 
     def run(self):
@@ -70,6 +83,12 @@ class Client(Thread):
             recv = self.recv()
             if recv:
                 message = json.loads(recv)
-                func = self.handlers.get(message['type'])
+                message_type = message['type']
+
+                if message_type == 'error':
+                    func = self.error_handlers.get(message_type)
+                else:
+                    func = self.handlers.get(message_type)
+
                 if func:
                     func(message['data'])
