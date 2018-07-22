@@ -86,7 +86,7 @@ class Client(Thread):
                 message_type = message['type']
 
                 if message_type == 'error':
-                    func = self.error_handlers.get(message_type)
+                    func = self.error_handlers.get(message['data']['code'])
                 else:
                     func = self.handlers.get(message_type)
 
