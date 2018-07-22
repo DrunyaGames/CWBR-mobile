@@ -1,12 +1,9 @@
 from config import *
-from werkzeug.local import Local
 from threading import Thread
 import socket
 import time
 import json
 
-local = Local()
-protocol = local('protocol')
 offline = False
 
 
@@ -63,8 +60,6 @@ class Client(Thread):
     def handle(self, event):
         def decorator(func):
             def warpper(data):
-                # noinspection PyUnresolvedReferences,PyDunderSlots
-                local.protocol = self
                 return func(**data)
             self.handlers[event] = warpper
             return warpper
@@ -75,4 +70,6 @@ class Client(Thread):
             recv = self.recv()
             if recv:
                 message = json.loads(recv)
-                self.handlers[message['type']](message['data'])
+                func = self.handlers.get(message['type'])
+                if func:
+                    func(message['data'])
