@@ -15,6 +15,7 @@ def darker_color(color):
     return(r*255, g*255, b*255)
 
 def colorization(image_path, color_before, color_after):
+    image_path = 'textures/items/'+image_path
     image = Image.open(image_path)
     image = image.convert('RGBA')
 

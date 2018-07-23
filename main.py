@@ -64,10 +64,10 @@ class MinerButton(ImageButton):
 
     def update_texture(self):
         if self.is_mining:
-            self.source = 'full_bowl.png'
+            self.source = 'textures/buttons/full_bowl.png'
             self.is_mining = False
         else:
-            self.source = 'empty_bowl.png'
+            self.source = 'textures/buttons/empty_bowl.png'
             self.is_mining = True
 
     @staticmethod

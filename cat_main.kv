@@ -11,7 +11,7 @@
 		Image:
 			size_hint: .3, .3
 			pos_hint: {'center_x':.5, 'y':.75}
-			source: 'logo.png'
+			source: 'textures/logos/logo.png'
         Label:
             text: 'ВОЙТИ'
             font_size: 48
@@ -68,7 +68,7 @@
 		Image:
 			size_hint: .3, .3
 			pos_hint: {'center_x':.5, 'y':.75}
-			source: 'logo.png'
+			source: 'textures/logos/logo.png'
         Label:
             text: 'РЕГИСТРАЦИЯ'
             font_size: 48
@@ -123,11 +123,11 @@
 					root.callback()
 <GameMenuScreen>:
 	Image:
-		source:'background.png'
+		source:'textures/backgrounds/background.png'
 		size: 720, 1280
 	FloatLayout:
 		ImageButton:
-			source: 'collection.png'
+			source: 'textures/buttons/collection.png'
 			size_hint: 0.2, 0.2
 			center_x: root.width/4
 			center_y: root.width/4
@@ -136,7 +136,7 @@
 				root.manager.transition.direction = 'left'
 		MinerButton:
 			id: miner
-			source: 'empty_bowl.png'
+			source: 'textures/buttons/empty_bowl.png'
 			center_x: 3*root.width/4
 			center_y: root.height/4
 			size_hint: 0.2, 0.2
@@ -163,7 +163,7 @@
 				root.manager.current = 'gamemenu'
 				root.manager.transition.direction = 'right'
 			Image:
-				source: 'back.png'
+				source: 'textures/buttons/back.png'
 			Label:
 				text: 'назад'
 
