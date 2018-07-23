@@ -1,3 +1,3 @@
 
-ADDRESS = ('localhost', 8956)
+ADDRESS = ('92.63.105.60', 8956)
 BUFFER_SIZE = 8000

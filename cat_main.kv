@@ -1,0 +1,206 @@
+#:kivy 1.0.9
+#:import Factory kivy.factory.Factory
+<SignInScreen>:
+    FloatLayout:
+        canvas.before:
+            Color:
+                rgba: 0.1843, 0.7098, 0.5254, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+		Image:
+			size_hint: .3, .3
+			pos_hint: {'center_x':.5, 'y':.75}
+			source: 'logo.png'
+        Label:
+            text: 'ВОЙТИ'
+            font_size: 48
+            font_name: 'fonts/font1.otf'
+            size_hint: .5, .25
+            pos_hint: {'center_x':.5, 'y':.6}
+        GridLayout:
+            size_hint: .7, .2
+            pos_hint: {'center_x':.5, 'center_y':.5}
+            cols:2
+            Label:
+                text: 'Имя'
+                font_size: 24
+                font_name: 'fonts/font1.otf'
+				
+            UserDataInput:
+                multiline: False
+                height: 10
+                font_size: 24
+				on_text: root.username = self.text
+            Label:
+                text: 'Пароль'
+                font_size: 24
+                font_name: 'fonts/font1.otf'
+            UserDataInput:
+                multiline: False
+                password: True
+                font_size: 24
+				on_text: root.password = self.text
+        BoxLayout:
+            size_hint: .5, .25
+            pos_hint: {'center_x':.5, 'center_y':.2}
+            Button:
+                text: 'Регистрация?'
+                size_hint: 0.2, 0.3
+                center_x: root.width/2
+                on_press:
+                    root.manager.current = 'signup'
+                    root.manager.transition.direction = 'left'
+            Button:
+                size_hint: 0.2, 0.3
+                text: 'войти'
+				on_press: 
+					root.callback()
+
+<SignUpScreen>:
+    FloatLayout:
+        canvas.before:
+            Color:
+                rgba: 0.3137, 0.4549, 0.7176, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+		Image:
+			size_hint: .3, .3
+			pos_hint: {'center_x':.5, 'y':.75}
+			source: 'logo.png'
+        Label:
+            text: 'РЕГИСТРАЦИЯ'
+            font_size: 48
+            font_name: 'fonts/font1.otf'
+            size_hint: .5, .25
+            pos_hint: {'center_x':.5, 'y':.6}
+        GridLayout:
+            size_hint: .7, .2
+            pos_hint: {'center_x':.5, 'center_y':.5}
+            cols:2
+            Label:
+                text: 'Придумайте имя'
+                font_size: 24
+                font_name: 'fonts/font1.otf'
+            UserDataInput:
+                multiline: False
+                height: 10
+                font_size: 24
+				on_text: root.username = self.text
+            Label:
+                text: 'Придумайте пароль'
+                font_size: 24
+                font_name: 'fonts/font1.otf'
+            UserDataInput:
+                multiline: False
+                password: True
+                font_size: 24
+				on_text: root.password = self.text
+            Label:
+                text: 'Повторите пароль'
+                font_size: 24
+                font_name: 'fonts/font1.otf'
+            UserDataInput:
+                multiline: False
+                password: True
+                font_size: 24
+				on_text: root.sec_password = self.text
+        BoxLayout:
+            size_hint: .5, .25
+            pos_hint: {'center_x':.5, 'center_y':.2}
+            Button:
+                text: 'Войти?'
+                size_hint: 0.2, 0.3
+                center_x: root.width/2
+                on_press:
+                    root.manager.current = 'signin'
+                    root.manager.transition.direction = 'right'
+            Button:
+                size_hint: 0.2, 0.3
+                text: 'зарегистрироваться'
+				on_press: 
+					root.callback()
+<GameMenuScreen>:
+	Image:
+		source:'background.png'
+		size: 720, 1280
+	FloatLayout:
+		ImageButton:
+			source: 'collection.png'
+			size_hint: 0.2, 0.2
+			center_x: root.width/4
+			center_y: root.width/4
+			on_release:
+				root.manager.current = 'collection'
+				root.manager.transition.direction = 'left'
+		MinerButton:
+			id: miner
+			source: 'empty_bowl.png'
+			center_x: 3*root.width/4
+			center_y: root.height/4
+			size_hint: 0.2, 0.2
+			on_release:
+				self.send_data()
+
+<CollectionScreen>:
+	FloatLayout:
+		canvas.before:
+			Color:
+				rgba: 0.6196, 0.7529, 1, 1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		Label:
+			text: 'КОЛЛЕКЦИЯ'
+			font_size: 66
+			pos_hint: {'center_x':.4, 'center_y':.9}
+			font_name: 'fonts/font2.ttf'
+		BoxButton:
+			pos_hint: {'center_x': .9, 'center_y':.9}
+			size_hint: .1, .1
+			on_press:
+				root.manager.current = 'gamemenu'
+				root.manager.transition.direction = 'right'
+			Image:
+				source: 'back.png'
+			Label:
+				text: 'назад'
+
+		ScrollView:
+			size_hint: 1, None
+			size: root.width, root.height
+			pos_hint: {'top':0.8}
+			CollectionLayout:
+				id: cl1
+				size_hint_y: None
+				cols: 4
+				
+				
+<-CatCollectionImage>:
+    canvas:
+        Color:
+            rgb: (1, 1, 1)
+        Rectangle:
+            texture: self.texture
+            #size: self.width, self.height
+            pos: self.x+21, self.y
+<CatCollectionButton>:
+	canvas.before:
+		Color:
+			rgba: 0.5058, 0.5803, 0.8862, 1
+		Rectangle:
+			pos: self.pos[0]+5, self.pos[1]+5
+			size: self.size[0]-10, self.size[1]-10
+	Label:
+		id: cat_power
+		size_hint: 1, 0.4
+	Image:
+		id: cat_image
+	EditableLabel:
+		id: cat_name
+		on_text:
+			root.change_cat_name()
+		
+
+
