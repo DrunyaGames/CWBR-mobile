@@ -61,7 +61,7 @@ class MinerButton(ImageButton):
     def send_data(self):
         client.send('mine_new_cat', {'mode':'easy'})
         game_menu.update_texture()
-
+    @mainthread
     def update_texture(self):
         if self.is_mining:
             self.source = 'textures/buttons/full_bowl.png'
