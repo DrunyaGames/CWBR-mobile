@@ -11,6 +11,8 @@ class Client(Thread):
     address = ADDRESS
     buffer_size = BUFFER_SIZE
 
+    delimiter = b'\r\n'
+
     def __init__(self):
         super().__init__()
 
@@ -42,11 +44,11 @@ class Client(Thread):
             self.make_socket()
 
         try:
-            self.sock.sendall(json.dumps({'type': message_type, 'data': data}).encode('utf-8'))
+            self.sock.sendall(json.dumps({'type': message_type, 'data': data}).encode('utf-8') + self.delimiter)
         except ConnectionAbortedError:
             self.reconnect()
 
-    def recv(self):
+    def _recv(self):
         if not self.sock:
             self.make_socket()
         try:
@@ -78,17 +80,22 @@ class Client(Thread):
 
         return decorator
 
+    def _recv_handle(self, message):
+        message = json.loads(message)
+        message_type = message['type']
+
+        if message_type == 'error':
+            func = self.error_handlers.get(message['data']['code'])
+        else:
+            func = self.handlers.get(message_type)
+
+        if func:
+            func(message['data'])
+
     def run(self):
         while True:
-            recv = self.recv()
+            recv = self._recv()
             if recv:
-                message = json.loads(recv)
-                message_type = message['type']
-
-                if message_type == 'error':
-                    func = self.error_handlers.get(message['data']['code'])
-                else:
-                    func = self.handlers.get(message_type)
-
-                if func:
-                    func(message['data'])
+                msgs = recv.split(self.delimiter)
+                for msg in msgs:
+                    self._recv_handle(msg)
