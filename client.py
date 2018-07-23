@@ -81,6 +81,8 @@ class Client(Thread):
         return decorator
 
     def _recv_handle(self, message):
+        if not message:
+            return
         message = json.loads(message)
         message_type = message['type']
 
@@ -96,6 +98,6 @@ class Client(Thread):
         while True:
             recv = self._recv()
             if recv:
-                msgs = recv.split(self.delimiter)
+                msgs = recv.strip(self.delimiter).split(self.delimiter)
                 for msg in msgs:
                     self._recv_handle(msg)
