@@ -41,7 +41,6 @@ main_theme = SoundLoader.load('main_theme.mp3')
 class CatCollectionImage(Image):
     pass
 
-
 class UserDataInput(TextInput):
     def insert_text(self, substring, from_undo=False):
         s = substring.replace(' ', '').replace('\t', '')
@@ -51,6 +50,10 @@ class UserDataInput(TextInput):
 class ImageButton(ButtonBehavior, Image):
     pass
 
+
+class Nickname(Image):
+    a = ObjectProperty(None)
+    pass
 
 class BoxButton(ButtonBehavior, BoxLayout):
     orientation = 'vertical'
@@ -83,6 +86,7 @@ class MinerButton(ImageButton):
         collection.collection.append(new_cat)
         cs.update_collection()
         game_menu.update_texture()
+        
 
 
 class CatCollectionButton(BoxButton):
@@ -144,14 +148,16 @@ class SignInScreen(Screen):
 
     def send_data(self):
         client.send('auth', {'name': self.username, 'password': self.password})
-
+        
     @staticmethod
     @client.handle('auth_ok')
     def get_answer(user_id, name, rights, cats, session):
         collection.create_collection(cats)
-        sm.current = 'gamemenu'
+        game_menu.add_nickname(name)
         cs.update_collection()
+        sm.current = 'gamemenu'
         main_theme.play()
+
 
 
 class SignUpScreen(Screen):
@@ -176,15 +182,22 @@ class SignUpScreen(Screen):
     @staticmethod
     @client.handle('reg_ok')
     def get_answer(user_id, name, rights, cats, session):
-        print('okk')
-        sm.current = 'gamemenu'
         cs.update_collection()
+        game_menu.add_nickname(name)
+        sm.current = 'gamemenu'
         main_theme.play()
 
 
 class GameMenuScreen(Screen):
     def update_texture(self):
         self.ids.miner.update_texture()
+    @mainthread
+    def add_nickname(self, name):
+        #holder = Nickname(size=(170, 50))
+        #holder.add_widget(Image(source='textures/items/nickname_holder.png'))
+        #holder.add_widget(Label(text=name, font_size=24))
+        #self.add_widget(holder)
+        pass
 
 
 class CollectionScreen(Screen):

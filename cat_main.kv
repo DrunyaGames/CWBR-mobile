@@ -121,21 +121,31 @@
                 text: 'зарегистрироваться'
 				on_press: 
 					root.callback()
+
 <GameMenuScreen>:
 	Image:
 		source:'textures/backgrounds/background.png'
 		size: 720, 1280
+
 	FloatLayout:
+		#Nickname:
+			#source: 'textures/items/nickname_holder.png'
+			#size: 170, 50
+			#pos: 0, 0
+			#center_x: root.width/2
+			#center_y: root.height/2
 		ImageButton:
 			source: 'textures/buttons/collection.png'
 			size_hint: 0.2, 0.2
+			#size: 125, 113
 			center_x: root.width/4
-			center_y: root.width/4
+			center_y: root.height/4
 			on_release:
 				root.manager.current = 'collection'
 				root.manager.transition.direction = 'left'
 		MinerButton:
 			id: miner
+			#size: 150, 150
 			source: 'textures/buttons/empty_bowl.png'
 			center_x: 3*root.width/4
 			center_y: root.height/4
@@ -143,7 +153,7 @@
 			on_release:
 				self.send_data()
 
-<CollectionScreen>:
+<CollectionScreen>:		
 	FloatLayout:
 		canvas.before:
 			Color:
