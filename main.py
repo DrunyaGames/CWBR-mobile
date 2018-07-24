@@ -17,7 +17,8 @@ from kivy.config import Config
 from kivy.uix.button import Button
 from kivy.properties import BooleanProperty, ObjectProperty
 from kivy.clock import mainthread, Clock
-from kivy.core.audio import SoundLoader
+#from kivy.core.audio import SoundLoader
+from kivydnd.dragndropwidget import DragNDropWidget
 from client import Client
 from classes import User, Cat, Collection
 from editable_lable import EditableLabel
@@ -27,6 +28,7 @@ import os
 
 Config.set('graphics', 'width', '480')
 Config.set('graphics', 'height', '854')
+Config.write()
 
 client = Client()
 
@@ -35,7 +37,7 @@ text = fileobj.read()
 fileobj.close()
 
 Builder.load_string(text)
-main_theme = SoundLoader.load('main_theme.mp3')
+#main_theme = SoundLoader.load('main_theme.mp3')
 
 
 class CatCollectionImage(Image):
@@ -51,41 +53,40 @@ class ImageButton(ButtonBehavior, Image):
     pass
 
 
-class Nickname(Image):
-    a = ObjectProperty(None)
-    pass
-
 class BoxButton(ButtonBehavior, BoxLayout):
     orientation = 'vertical'
 
+class CatFood(ImageButton, DragNDropWidget):
+    def __init__(self, **kw):
+        super().__init__(**kw)    
 
 class MinerButton(ImageButton):
-    is_mining = False
-
+    source = 'textures/buttons/empty_bowl.png'
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.update_texture()
+        
 
-    def send_data(self):
+    def send_data_easy(self, *args, **kwargs):
         client.send('mine_new_cat', {'mode': 'easy'})
-        game_menu.update_texture()
+        self.source = 'textures/buttons/full_bowl.png'
 
-    @mainthread
-    def update_texture(self):
-        if self.is_mining:
-            self.source = 'textures/buttons/full_bowl.png'
-            self.is_mining = False
-        else:
-            self.source = 'textures/buttons/empty_bowl.png'
-            self.is_mining = True
+    def send_data_normal(self, *args, **kwargs):
+        client.send('mine_new_cat', {'mode': 'normal'})
+        self.source = 'textures/buttons/full_bowl.png'
+
+    def send_data_hard(self, *args, **kwargs):
+        client.send('mine_new_cat', {'mode': 'hard'})
+        self.source = 'textures/buttons/full_bowl.png'
+        
 
     @staticmethod
     @client.handle('new_cat')
     def get_answer(**cat):
         new_cat = Cat(cat)
         collection.collection.append(new_cat)
-        cs.update_collection()
-        game_menu.update_texture()
+        cs.add_cat(new_cat)
+        game_menu.ids.miner.source = 'textures/buttons/empty_bowl.png'
+        #game_menu.stop_mining()
         
 
 
@@ -113,7 +114,7 @@ class CollectionLayout(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bind(minimum_height=self.setter('height'))
-        self.update_collection()
+        self.show_cats()
 
     def add_cat(self, cat):
         self.widgets.append(CatCollectionButton(cat, size_hint_y=None, height=140))
@@ -122,24 +123,27 @@ class CollectionLayout(GridLayout):
 
     def show_cats(self):
         print('AAA', self.widgets)  # DO NOT ERASE
-        # for i in self.widgets:
-        # sleep(0.1)
-        # self.add_widget(i)
-
-    def update_collection(self):
-        for i in self.widgets:
-            self.remove_widget(i)
-            sleep(0.1)
-        self.widgets = []
         for cat in collection.collection:
             sleep(0.1)
-            self.add_cat(cat)
-        # self.show_cats()
+            self.add_cat(cat)      
 
 
-class SignInScreen(Screen):
+##    def update_collection(self):
+##        for i in self.widgets:
+##            self.remove_widget(i)
+##            sleep(0.1)
+##        self.widgets = []
+##        for cat in collection.collection:
+##            sleep(0.1)
+##            self.add_cat(cat)
+##        # self.show_cats()
+
+
+class SignScreen(Screen):
     username = ''
     password = ''
+    mess_send_type = ''
+    mess_get_type = ''
 
     def callback(self):
         print(self.username)
@@ -147,22 +151,30 @@ class SignInScreen(Screen):
         self.send_data()
 
     def send_data(self):
-        client.send('auth', {'name': self.username, 'password': self.password})
+        client.send(self.mess_send_type, {'name': self.username, 'password': self.password})
+
+
+    
+
+class SignInScreen(SignScreen):
+    mess_send_type = 'auth'
+    mess_get_type = 'auth_ok'
         
     @staticmethod
-    @client.handle('auth_ok')
+    @client.handle(mess_get_type)
     def get_answer(user_id, name, rights, cats, session):
         collection.create_collection(cats)
         game_menu.add_nickname(name)
-        cs.update_collection()
+        cs.show_cats()
         sm.current = 'gamemenu'
-        main_theme.play()
+        #main_theme.play()
 
 
 
 class SignUpScreen(Screen):
-    username = ''
-    password = ''
+    mess_send_type = 'reg'
+    mess_get_type = 'reg_ok'
+    
     sec_password = ''
     popup = Popup(title='ERROR',
                   content=Label(text='Пароли не совпадают!'),
@@ -176,35 +188,37 @@ class SignUpScreen(Screen):
         else:
             self.popup.open()
 
-    def send_data(self):
-        client.send('reg', {'name': self.username, 'password': self.password})
-
     @staticmethod
-    @client.handle('reg_ok')
+    @client.handle(mess_get_type)
     def get_answer(user_id, name, rights, cats, session):
-        cs.update_collection()
+        collection.create_collection(cats)
         game_menu.add_nickname(name)
+        cs.show_cats()
         sm.current = 'gamemenu'
-        main_theme.play()
-
+        #main_theme.play()
 
 class GameMenuScreen(Screen):
-    def update_texture(self):
-        self.ids.miner.update_texture()
+    @mainthread
+    def start_mining(self):
+        self.ids.miner.source = 'textures/buttons/full_bowl.png'
+
+    @mainthread
+    def stop_mining(self):
+        self.ids.miner.source = 'textures/buttons/empty_bowl.png'
+
     @mainthread
     def add_nickname(self, name):
-        #holder = Nickname(size=(170, 50))
-        #holder.add_widget(Image(source='textures/items/nickname_holder.png'))
-        #holder.add_widget(Label(text=name, font_size=24))
-        #self.add_widget(holder)
-        pass
+        self.ids.nickname.text = name
 
 
 class CollectionScreen(Screen):
     changed_name = ''
 
-    def update_collection(self):
-        self.ids.cl1.update_collection()
+    def show_cats(self):
+        self.ids.cl1.show_cats()
+
+    def add_cat(self, new_cat):
+        self.ids.cl1.add_cat(new_cat)
 
     def hello(self):
         print(self.changed_name)
@@ -230,9 +244,17 @@ sm.add_widget(CatInfoScreen(name='catinfo'))
 
 
 class CatApp(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def build(self):
         return sm
+
+    def greet(self, calling_widget):
+        print('DROPPED')
+
+    def oops(self, the_widget=None, parent=None, kv_root=None):
+        print("NOT DROPPED")
 
 
 if __name__ == '__main__':
