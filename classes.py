@@ -48,8 +48,9 @@ class Cat():
         self.power = cat_data['power']
         self.owner_id = cat_data['owner_id']
         self.is_tum = cat_data['tum']
+        self.is_tail = cat_data['tail']
         self.path = 'temp_cats/' + str(self.id) + '.png'
         self.gen_cat()
 
     def gen_cat(self):
-        color_cat(self.main_color, self.is_tum, self.id)
+        color_cat(self.main_color, self.is_tum, self.is_tail, self.id)

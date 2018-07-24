@@ -1,29 +1,28 @@
 __version__ = '1.0'
 
 import codecs
-from kivy.app import App
-from kivy.lang import Builder
-
-from kivy.uix.screenmanager import *  # ScreenManager, Screen
-from kivy.uix.textinput import TextInput
-from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.image import Image
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.config import Config
-from kivy.uix.button import Button
-from kivy.properties import BooleanProperty, ObjectProperty
-from kivy.clock import mainthread, Clock
+from kivy.app                import App
+from kivy.lang               import Builder
 # from kivy.core.audio import SoundLoader
+from kivy.uix.screenmanager  import *  # ScreenManager, Screen
+from kivy.uix.textinput      import TextInput
+from kivy.uix.popup          import Popup
+from kivy.uix.label          import Label
+from kivy.uix.behaviors      import ButtonBehavior
+from kivy.uix.image          import Image
+from kivy.uix.gridlayout     import GridLayout
+from kivy.uix.boxlayout      import BoxLayout
+from kivy.uix.floatlayout    import FloatLayout
+from kivy.config             import Config
+from kivy.uix.button         import Button
+from kivy.properties         import BooleanProperty, ObjectProperty
+from kivy.clock              import mainthread, Clock
 from kivydnd.dragndropwidget import DragNDropWidget
-from client import Client
-from classes import User, Cat, Collection
-from editable_lable import EditableLabel
-from time import sleep
-from traceback import print_exc
+from client                  import Client
+from classes                 import User, Cat, Collection
+from editable_lable          import EditableLabel
+from time                    import sleep
+from traceback               import print_exc
 import os
 
 Config.set('graphics', 'width', '480')
@@ -90,6 +89,7 @@ class MinerButton(ImageButton):
         collection.collection.append(new_cat)
         cs.add_cat(new_cat)
         game_menu.ids.miner.source = 'textures/buttons/empty_bowl.png'
+
         # game_menu.stop_mining()
 
 
@@ -164,7 +164,7 @@ class SignInScreen(SignScreen):
 
     @staticmethod
     @client.handle(mess_get_type)
-    def get_answer(user_id, name, rights, cats, session):
+    def get_answer(user_id, name, rights, cats, session, is_mining):
         collection.create_collection(cats)
         game_menu.add_nickname(name)
         cs.show_cats()
@@ -172,7 +172,7 @@ class SignInScreen(SignScreen):
         # main_theme.play()
 
 
-class SignUpScreen(Screen):
+class SignUpScreen(SignScreen):
     mess_send_type = 'reg'
     mess_get_type = 'reg_ok'
 
@@ -191,7 +191,7 @@ class SignUpScreen(Screen):
 
     @staticmethod
     @client.handle(mess_get_type)
-    def get_answer(user_id, name, rights, cats, session):
+    def get_answer(user_id, name, rights, cats, session, is_mining):
         collection.create_collection(cats)
         game_menu.add_nickname(name)
         cs.show_cats()
