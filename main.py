@@ -17,7 +17,7 @@ from kivy.config import Config
 from kivy.uix.button import Button
 from kivy.properties import BooleanProperty, ObjectProperty
 from kivy.clock import mainthread, Clock
-#from kivy.core.audio import SoundLoader
+# from kivy.core.audio import SoundLoader
 from kivydnd.dragndropwidget import DragNDropWidget
 from client import Client
 from classes import User, Cat, Collection
@@ -37,11 +37,14 @@ text = fileobj.read()
 fileobj.close()
 
 Builder.load_string(text)
-#main_theme = SoundLoader.load('main_theme.mp3')
+
+
+# main_theme = SoundLoader.load('main_theme.mp3')
 
 
 class CatCollectionImage(Image):
     pass
+
 
 class UserDataInput(TextInput):
     def insert_text(self, substring, from_undo=False):
@@ -56,15 +59,17 @@ class ImageButton(ButtonBehavior, Image):
 class BoxButton(ButtonBehavior, BoxLayout):
     orientation = 'vertical'
 
+
 class CatFood(ImageButton, DragNDropWidget):
     def __init__(self, **kw):
-        super().__init__(**kw)    
+        super().__init__(**kw)
+
 
 class MinerButton(ImageButton):
-    source = 'textures/buttons/empty_bowl.png'
+    # source = 'textures/buttons/empty_bowl.png'
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
 
     def send_data_easy(self, *args, **kwargs):
         client.send('mine_new_cat', {'mode': 'easy'})
@@ -77,7 +82,6 @@ class MinerButton(ImageButton):
     def send_data_hard(self, *args, **kwargs):
         client.send('mine_new_cat', {'mode': 'hard'})
         self.source = 'textures/buttons/full_bowl.png'
-        
 
     @staticmethod
     @client.handle('new_cat')
@@ -86,8 +90,7 @@ class MinerButton(ImageButton):
         collection.collection.append(new_cat)
         cs.add_cat(new_cat)
         game_menu.ids.miner.source = 'textures/buttons/empty_bowl.png'
-        #game_menu.stop_mining()
-        
+        # game_menu.stop_mining()
 
 
 class CatCollectionButton(BoxButton):
@@ -125,10 +128,11 @@ class CollectionLayout(GridLayout):
         print('AAA', self.widgets)  # DO NOT ERASE
         for cat in collection.collection:
             sleep(0.1)
-            self.add_cat(cat)      
+            self.add_cat(cat)
+
+        ##    def update_collection(self):
 
 
-##    def update_collection(self):
 ##        for i in self.widgets:
 ##            self.remove_widget(i)
 ##            sleep(0.1)
@@ -154,12 +158,10 @@ class SignScreen(Screen):
         client.send(self.mess_send_type, {'name': self.username, 'password': self.password})
 
 
-    
-
 class SignInScreen(SignScreen):
     mess_send_type = 'auth'
     mess_get_type = 'auth_ok'
-        
+
     @staticmethod
     @client.handle(mess_get_type)
     def get_answer(user_id, name, rights, cats, session):
@@ -167,14 +169,13 @@ class SignInScreen(SignScreen):
         game_menu.add_nickname(name)
         cs.show_cats()
         sm.current = 'gamemenu'
-        #main_theme.play()
-
+        # main_theme.play()
 
 
 class SignUpScreen(Screen):
     mess_send_type = 'reg'
     mess_get_type = 'reg_ok'
-    
+
     sec_password = ''
     popup = Popup(title='ERROR',
                   content=Label(text='Пароли не совпадают!'),
@@ -195,7 +196,8 @@ class SignUpScreen(Screen):
         game_menu.add_nickname(name)
         cs.show_cats()
         sm.current = 'gamemenu'
-        #main_theme.play()
+        # main_theme.play()
+
 
 class GameMenuScreen(Screen):
     @mainthread
