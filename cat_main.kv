@@ -151,6 +151,15 @@
 			on_release:
 				root.manager.current = 'collection'
 				root.manager.transition.direction = 'left'
+		
+		ImageButton:
+			source:'textures/buttons/inventory.png'
+			size_hint: 0.2, 0.1
+			center_x: root.width/8
+			center_y: root.height/8
+			on_release:
+				root.manager.current = 'inventory'
+				root.manager.transition.direction = 'down'			
 	
 		MinerButton:
 			id: miner
@@ -190,6 +199,14 @@
 			CatFood:
 				text: ''
 				source: 'textures/items/milk_hard.png'
+				droppable_zone_objects: [miner]
+				drop_func: miner.send_data_hard
+				#failed_drop_func: app.oops
+				size_hint: None, None
+				size:100, 100
+			CatFood:
+				text: ''
+				source: 'textures/items/milk_legendary.png'
 				droppable_zone_objects: [miner]
 				drop_func: miner.send_data_hard
 				#failed_drop_func: app.oops
@@ -254,5 +271,27 @@
 		on_text:
 			root.change_cat_name()
 		
-
+<InventoryScreen>:
+	FloatLayout:
+		canvas.before:
+			Color:
+				rgba: 0.3058, 0.7803, 0.6862, 1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		BoxButton:
+			pos_hint: {'center_x': .9, 'center_y':.9}
+			size_hint: .1, .1
+			on_press:
+				root.manager.current = 'gamemenu'
+				root.manager.transition.direction = 'up'
+			Image:
+				source: 'textures/buttons/back.png'
+			Label:
+				text: 'назад'
+		Label:
+			text: 'ИНВЕНТАРЬ\nЛУТБОКСОВ'
+			font_size: 60
+			pos_hint: {'center_x':.4, 'center_y':.9}
+			font_name: 'fonts/font2.ttf'
 

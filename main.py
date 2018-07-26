@@ -40,7 +40,6 @@ Builder.load_string(text)
 
 # main_theme = SoundLoader.load('main_theme.mp3')
 
-
 class CatCollectionImage(Image):
     pass
 
@@ -80,6 +79,10 @@ class MinerButton(ImageButton):
 
     def send_data_hard(self, *args, **kwargs):
         client.send('mine_new_cat', {'mode': 'hard'})
+        self.source = 'textures/buttons/full_bowl.png'
+
+    def send_data_hard(self, *args, **kwargs):
+        client.send('mine_new_cat', {'mode': 'legendary'})
         self.source = 'textures/buttons/full_bowl.png'
 
     @staticmethod
@@ -229,6 +232,9 @@ class CollectionScreen(Screen):
 class CatInfoScreen(Screen):
     pass
 
+class InventoryScreen(Screen):
+    pass
+
 
 collection = Collection()
 
@@ -237,12 +243,14 @@ sm = ScreenManager()
 ss = SignInScreen(name='signin')
 cs = CollectionScreen(name='collection')
 game_menu = GameMenuScreen(name='gamemenu')
+inventory = InventoryScreen(name='inventory')
 
 sm.add_widget(ss)
 sm.add_widget(SignUpScreen(name='signup'))
 sm.add_widget(game_menu)
 sm.add_widget(cs)
 sm.add_widget(CatInfoScreen(name='catinfo'))
+sm.add_widget(inventory)
 
 
 class CatApp(App):
@@ -251,13 +259,6 @@ class CatApp(App):
 
     def build(self):
         return sm
-
-    def greet(self, calling_widget):
-        print('DROPPED')
-
-    def oops(self, the_widget=None, parent=None, kv_root=None):
-        print("NOT DROPPED")
-
 
 if __name__ == '__main__':
     try:

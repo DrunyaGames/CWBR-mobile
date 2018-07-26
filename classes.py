@@ -1,5 +1,5 @@
 from random import randint
-from color_cat import color_cat
+from color_cat import color_cat, god_cat
 from kivy.uix.image import Image
 from kivy.clock import mainthread
 import os
@@ -50,7 +50,13 @@ class Cat():
         self.is_tum = cat_data['tum']
         self.is_tail = cat_data['tail']
         self.path = 'temp_cats/' + str(self.id) + '.png'
+        print(self.path)
         self.gen_cat()
+        if self.power > 30:
+            self.god_cat()
 
     def gen_cat(self):
         color_cat(self.main_color, self.is_tum, self.is_tail, self.id)
+
+    def god_cat(self):
+        god_cat(str(self.id))
