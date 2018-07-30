@@ -52,11 +52,11 @@ class Cat():
         self.path = 'temp_cats/' + str(self.id) + '.png'
         print(self.path)
         self.gen_cat()
-        if self.power > 30:
+        if self.power >= 30:
             self.god_cat()
 
     def gen_cat(self):
         color_cat(self.main_color, self.is_tum, self.is_tail, self.id)
 
     def god_cat(self):
-        god_cat(str(self.id))
+        god_cat(self.path)

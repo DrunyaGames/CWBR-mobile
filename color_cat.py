@@ -47,8 +47,8 @@ def color_cat(color, is_tum, is_tail, cat_id):
     im.save(path)
     return path
 
-def god_cat(name):
-    im = Image.open('temp_cats/'+name+'.png')
+def god_cat(path):
+    im = Image.open(path)
     aura = Image.open('textures/items/god_cat.png')
     aura.paste(im, (0, 0), im)
-    aura.save('temp_cats/'+name+'.png')
+    aura.save(path)

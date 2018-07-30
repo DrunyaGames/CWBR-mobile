@@ -40,10 +40,6 @@ Builder.load_string(text)
 
 # main_theme = SoundLoader.load('main_theme.mp3')
 
-class CatCollectionImage(Image):
-    pass
-
-
 class UserDataInput(TextInput):
     def insert_text(self, substring, from_undo=False):
         s = substring.replace(' ', '').replace('\t', '')
@@ -57,34 +53,48 @@ class ImageButton(ButtonBehavior, Image):
 class BoxButton(ButtonBehavior, BoxLayout):
     orientation = 'vertical'
 
+class Shelf(BoxLayout):
+    milk_textures = {'2':'textures/items/milk.png',
+                    '2:1':'textures/items/milk_normal.png',
+                    '2:2':'textures/items/milk_hard.png',
+                    '2:3':'textures/items/milk_legendary.png'
+                    }
+    def __init__(self, **kw):
+        super().__init__(**kw)
+
+    @mainthread
+    def add_food(self, id):
+        food = CatFood(source=self.milk_textures[id],
+                       droppable_zone_objects=[game_menu.ids.miner],
+                       drop_func=game_menu.ids.miner.send_data,
+                       drop_args=[id])
+        self.add_widget(food)
+        
+
 
 class CatFood(ImageButton, DragNDropWidget):
     def __init__(self, **kw):
         super().__init__(**kw)
+        self.text = ''
+        self.size_hint = (None, None)
+        self.size = (100, 100)
+        #self.remove_on_drag = False
 
 
 class MinerButton(ImageButton):
-    # source = 'textures/buttons/empty_bowl.png'
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def send_data_easy(self, *args, **kwargs):
-        client.send('mine_new_cat', {'mode': 'easy'})
-        self.source = 'textures/buttons/full_bowl.png'
+    def send_data(self, *args, **kwargs):
+        client.send('use_item', {'item_id': args[1]})
 
-    def send_data_normal(self, *args, **kwargs):
-        client.send('mine_new_cat', {'mode': 'normal'})
-        self.source = 'textures/buttons/full_bowl.png'
+    @mainthread
+    @staticmethod
+    @client.handle('item_used')
+    def success_start():
+        game_menu.ids.miner.source = 'textures/buttons/full_bowl.png'
 
-    def send_data_hard(self, *args, **kwargs):
-        client.send('mine_new_cat', {'mode': 'hard'})
-        self.source = 'textures/buttons/full_bowl.png'
-
-    def send_data_hard(self, *args, **kwargs):
-        client.send('mine_new_cat', {'mode': 'legendary'})
-        self.source = 'textures/buttons/full_bowl.png'
-
+    @mainthread
     @staticmethod
     @client.handle('new_cat')
     def get_answer(**cat):
@@ -97,13 +107,12 @@ class MinerButton(ImageButton):
 
 
 class CatCollectionButton(BoxButton):
-    cat_id = None
-
+    
     @mainthread
     def __init__(self, cat, **kwargs):
         super().__init__(**kwargs)
-
-        self.ids.cat_power.text = f'СИЛА: {cat.power}'
+        self.cat_id = None
+        #self.ids.cat_power.text = str(cat.power)
         self.ids.cat_image.source = cat.path
         self.ids.cat_name.text = cat.name
         self.cat_id = cat.id
@@ -167,11 +176,13 @@ class SignInScreen(SignScreen):
 
     @staticmethod
     @client.handle(mess_get_type)
-    def get_answer(user_id, name, rights, cats, session, is_mining):
+    def get_answer(user_id, name, rights, cats, session, is_mining, inventory):
         collection.create_collection(cats)
         game_menu.add_nickname(name)
         cs.show_cats()
         sm.current = 'gamemenu'
+        print(inventory)
+        game_menu.add_food(inventory)
         # main_theme.play()
 
 
@@ -194,11 +205,12 @@ class SignUpScreen(SignScreen):
 
     @staticmethod
     @client.handle(mess_get_type)
-    def get_answer(user_id, name, rights, cats, session, is_mining):
+    def get_answer(user_id, name, rights, cats, session, is_mining, inventory):
         collection.create_collection(cats)
         game_menu.add_nickname(name)
         cs.show_cats()
         sm.current = 'gamemenu'
+        game_menu.add_food(inventory)
         # main_theme.play()
 
 
@@ -214,6 +226,11 @@ class GameMenuScreen(Screen):
     @mainthread
     def add_nickname(self, name):
         self.ids.nickname.text = name
+
+    def add_food(self, inventory):
+        for milk in inventory:
+            for i in range(milk['count']):
+                self.ids.shelf.add_food(milk['id'])
 
 
 class CollectionScreen(Screen):

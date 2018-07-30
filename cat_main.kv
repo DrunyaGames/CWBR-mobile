@@ -124,6 +124,8 @@
 				on_press: 
 					root.callback()
 
+					
+					
 <GameMenuScreen>:
 	Image:
 		source:'textures/backgrounds/background.png'
@@ -169,7 +171,7 @@
 			center_y: root.height/4
 			size_hint: 0.2, 0.2
 
-		BoxLayout:
+		Shelf:
 			id: shelf
 			canvas:
 				Color:
@@ -179,39 +181,6 @@
 					size: self.size[0], 20
 			size_hint: 0.8, 0.25
 			pos_hint: {'x': 0.1, 'y': 0.6}
-
-			CatFood:
-				text: ''
-				source: 'textures/items/milk.png'
-				droppable_zone_objects: [miner]
-				drop_func: miner.send_data_easy
-				#failed_drop_func: app.oops
-				size_hint: None, None
-				size:100, 100
-			CatFood:
-				text: ''
-				source: 'textures/items/milk_normal.png'
-				droppable_zone_objects: [miner]
-				drop_func: miner.send_data_normal
-				#failed_drop_func: app.oops
-				size_hint: None, None
-				size:100, 100				
-			CatFood:
-				text: ''
-				source: 'textures/items/milk_hard.png'
-				droppable_zone_objects: [miner]
-				drop_func: miner.send_data_hard
-				#failed_drop_func: app.oops
-				size_hint: None, None
-				size:100, 100
-			CatFood:
-				text: ''
-				source: 'textures/items/milk_legendary.png'
-				droppable_zone_objects: [miner]
-				drop_func: miner.send_data_hard
-				#failed_drop_func: app.oops
-				size_hint: None, None
-				size:100, 100
 <CollectionScreen>:		
 	FloatLayout:
 		canvas.before:
@@ -222,7 +191,7 @@
 				size: self.size
 		Label:
 			text: 'КОЛЛЕКЦИЯ'
-			font_size: 66
+			font_size: 60
 			pos_hint: {'center_x':.4, 'center_y':.9}
 			font_name: 'fonts/font2.ttf'
 		BoxButton:
@@ -245,15 +214,6 @@
 				size_hint_y: None
 				cols: 4
 				
-				
-<-CatCollectionImage>:
-    canvas:
-        Color:
-            rgb: (1, 1, 1)
-        Rectangle:
-            texture: self.texture
-            #size: self.width, self.height
-            pos: self.x+21, self.y
 <CatCollectionButton>:
 	canvas.before:
 		Color:
@@ -261,11 +221,18 @@
 		Rectangle:
 			pos: self.pos[0]+5, self.pos[1]+5
 			size: self.size[0]-10, self.size[1]-10
-	Label:
-		id: cat_power
-		size_hint: 1, 0.4
-	Image:
-		id: cat_image
+	RelativeLayout:
+		Image:
+			id: cat_image
+			pos_hint: {'top':1}
+			pos: self.pos
+		Label:
+			id: cat_power
+			size_hint: 1, 0.4
+			pos_hint: {'x':.3, 'y':.5}
+			pos:self.pos
+			font_size:100
+
 	EditableLabel:
 		id: cat_name
 		on_text:
