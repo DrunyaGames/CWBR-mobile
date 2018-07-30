@@ -221,18 +221,11 @@
 		Rectangle:
 			pos: self.pos[0]+5, self.pos[1]+5
 			size: self.size[0]-10, self.size[1]-10
-	RelativeLayout:
-		Image:
-			id: cat_image
-			pos_hint: {'top':1}
-			pos: self.pos
-		Label:
-			id: cat_power
-			size_hint: 1, 0.4
-			pos_hint: {'x':.3, 'y':.5}
-			pos:self.pos
-			font_size:100
-
+	Label:
+		id: cat_power
+		size_hint: 1, 0.4
+	Image:
+		id: cat_image
 	EditableLabel:
 		id: cat_name
 		on_text:
