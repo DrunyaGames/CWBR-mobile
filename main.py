@@ -112,7 +112,7 @@ class CatCollectionButton(BoxButton):
     def __init__(self, cat, **kwargs):
         super().__init__(**kwargs)
         self.cat_id = None
-        #self.ids.cat_power.text = str(cat.power)
+        self.ids.cat_power.text = f'СИЛА {cat.power}'
         self.ids.cat_image.source = cat.path
         self.ids.cat_name.text = cat.name
         self.cat_id = cat.id
